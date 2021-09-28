@@ -1,4 +1,4 @@
-import Component from '../../views/component.js';
+import Component from '../../views/component';
 
 class Error404 extends Component {
     render() {

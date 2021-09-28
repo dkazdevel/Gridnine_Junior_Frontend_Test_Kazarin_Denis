@@ -1,6 +1,6 @@
-import Component from '../../views/component.js';
+import Component from '../../views/component';
 
-import Flights from '../../models/flights.js';
+import Flights from '../../models/flights';
 
 class SearchResult extends Component {
 	constructor() {
@@ -120,9 +120,8 @@ class SearchResult extends Component {
 		});
 
 		priceForm.addEventListener('keyup', event => {
-			const target = event.target,
-						lowPriceInput = priceForm.getElementsByClassName('price-low')[0],
-						topPriceInput = priceForm.getElementsByClassName('price-top')[0];
+			const target = event.target;
+
 
 			let 	filteredData;
 
@@ -196,17 +195,6 @@ class SearchResult extends Component {
 	filterWithoutTransferData(flightsData) {
 		const filteredData = flightsData.filter(flightObj => {
 				if (flightObj.flight.legs[0].segments.length === 1 && flightObj.flight.legs[1].segments.length === 1) {
-					return true;
-				}
-		})
-
-		return filteredData;
-	}
-
-	filterByAirLines(flightsData) {
-		const airLinesDatabase = getAirlinesInfo(flightsData);
-		const filteredData = flightsData.filter(flightObj => {
-				if (flightObj.flight.carrier.uid === 1 && flightObj.flight.legs[1].segments.length === 1) {
 					return true;
 				}
 		})
@@ -323,19 +311,23 @@ class SearchResult extends Component {
 		const flightsActualData = this.sortFilterData(flightsData),
 					airlinesTitle = {};
 
-		flightsActualData.forEach(obj => {
-				if(!airlinesTitle[obj.flight.carrier.caption]) {
-					const airlineObj = {
-						'airLineCode': obj.flight.carrier.uid,
-						'priceFrom': obj.flight.price.total.amount
-					}
-					airlinesTitle[obj.flight.carrier.caption] = airlineObj;
-				} else {
-					if (+obj.flight.price.total.amount < +airlinesTitle[obj.flight.carrier.caption].priceFrom) {
-						airlinesTitle[obj.flight.carrier.caption].priceFrom = obj.flight.price.total.amount;
-					}
-				}
-		})
+		if (Array.isArray(flightsActualData)) {
+			if (flightsActualData.length != 0 || flightsActualData === undefined) {
+				flightsActualData.forEach(obj => {
+						if(!airlinesTitle[obj.flight.carrier.caption]) {
+							const airlineObj = {
+								'airLineCode': obj.flight.carrier.uid,
+								'priceFrom': obj.flight.price.total.amount
+							}
+							airlinesTitle[obj.flight.carrier.caption] = airlineObj;
+						} else {
+							if (+obj.flight.price.total.amount < +airlinesTitle[obj.flight.carrier.caption].priceFrom) {
+								airlinesTitle[obj.flight.carrier.caption].priceFrom = obj.flight.price.total.amount;
+							}
+						}
+				})
+			}
+		}
 
 		return airlinesTitle;
 	}
@@ -346,8 +338,8 @@ class SearchResult extends Component {
 
 		for (let key in airlinesData) {
 			html.push(`
-				<input value="${airlinesData[key].airLineCode}" id="${airlinesData[key].airLineCode}" type="checkbox"><label for="${airlinesData[key].airLineCode}"> – ${key}</label>
-				<p> от <span>${airlinesData[key].priceFrom}</span> р.</p><br>
+				<input value="${airlinesData[key].airLineCode}" id="${airlinesData[key].airLineCode}" type="checkbox"><label for="${airlinesData[key].airLineCode}"> – ${key} от ${airlinesData[key].priceFrom} р.</label>
+				<br>
 			`);
 		}
 
@@ -445,7 +437,7 @@ class SearchResult extends Component {
 															&#8594;
 															<span class="content-container__right-part__orders__order__flight-box__flight-route__p__arrival-city">${arrivalCityLeg1}</span>,
 															<span class="content-container__right-part__orders__order__flight-box__flight-route__p__arrival-airport">${arrivalAirportLeg1}</span>
-															<span class="content-container__right-part__orders__order__flight-box__flight-route__p__arrival-airport-code">(${arrivalAirportUidLeg0})</span>
+															<span class="content-container__right-part__orders__order__flight-box__flight-route__p__arrival-airport-code">(${arrivalAirportUidLeg1})</span>
 														</p>
 													</div>
 													<div class="content-container__right-part__orders__order__flight-box__flight-time">

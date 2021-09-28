@@ -2,7 +2,6 @@ const express = require('express'),
       bodyParser = require('body-parser'),
       morgan = require('morgan'),
 	  fs = require('file-system'),
-	  shortId = require('shortid'),
 	  dbFilePathFlights = 'flights.json',
     app = express();
 
