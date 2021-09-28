@@ -69,7 +69,6 @@ class SearchResult extends Component {
 					priceForm = document.getElementsByClassName('price-form')[0];
 					airlinesForm.innerHTML = this.getAirlinesHTML(flightsData);
 
-
 		moreButton.addEventListener('click', () => {
 			const choosedFlightsData = this.sortFilterData(flightsData);
 
@@ -87,21 +86,21 @@ class SearchResult extends Component {
 					filteredData = this.sortFilterData(flightsData);
 					localStorage.setItem('flightsCount', 0);
 					flightOrdersContainer.innerHTML = this.drawFlightsHTML(filteredData);
-					airlinesForm.innerHTML = this.getAirlinesHTML(filteredData);
+					this.isAirlineChecked(flightsData)
 					break;
 				case targetClassList.contains('priceLowSort'):
 					this.stateDataset(priceDurationSortRadioForm, target);
 					filteredData = this.sortFilterData(flightsData);
 					localStorage.setItem('flightsCount', 0);
 					flightOrdersContainer.innerHTML = this.drawFlightsHTML(filteredData);
-						airlinesForm.innerHTML = this.getAirlinesHTML(filteredData);
+					this.isAirlineChecked(flightsData)
 					break;
 				case targetClassList.contains('durationTopSort'):
 					this.stateDataset(priceDurationSortRadioForm, target);
 					filteredData = this.sortFilterData(flightsData);
 					localStorage.setItem('flightsCount', 0);
 					flightOrdersContainer.innerHTML = this.drawFlightsHTML(filteredData);
-						airlinesForm.innerHTML = this.getAirlinesHTML(filteredData);
+					this.isAirlineChecked(flightsData)
 					break;
 			}
 		})
@@ -115,25 +114,53 @@ class SearchResult extends Component {
 				localStorage.setItem('flightsCount', 0);
 
 				flightOrdersContainer.innerHTML = this.drawFlightsHTML(filteredData);
-				airlinesForm.innerHTML = this.getAirlinesHTML(filteredData);
+				this.isAirlineChecked(flightsData)
 			}
 		});
 
 		priceForm.addEventListener('keyup', event => {
 			const target = event.target;
-
-
 			let 	filteredData;
 
 			if (target.tagName === 'INPUT' || target.tagName === 'LABEL') {
 				filteredData = this.sortFilterData(flightsData);
 				localStorage.setItem('flightsCount', 0);
-
 				flightOrdersContainer.innerHTML = this.drawFlightsHTML(filteredData);
-				airlinesForm.innerHTML = this.getAirlinesHTML(filteredData);
+				this.isAirlineChecked(flightsData)
 			}
 		});
+
+		airlinesForm.addEventListener('click', event => {
+			const target = event.target;
+			let	filteredData;
+
+			if (target.tagName === 'INPUT') {
+				target.toggleAttribute('checked');
+				filteredData = this.sortFilterData(flightsData);
+				localStorage.setItem('flightsCount', 0);
+				flightOrdersContainer.innerHTML = this.drawFlightsHTML(this.filterByAirlines(filteredData));
+			}
+		})
 }
+
+	filterByAirlines(filteredData) {
+		const airlinesForm = document.getElementsByClassName('airlines-form')[0],
+					airlinesFormInputs = airlinesForm.getElementsByTagName('INPUT');
+		let		filteredByAirlinesData,
+					airlinesActiveInputs = [];
+
+		for (let i=0; i<airlinesFormInputs.length; i++) {
+			airlinesFormInputs[i].checked && airlinesActiveInputs.push(airlinesFormInputs[i].value);
+		}
+
+			filteredByAirlinesData = filteredData.filter(flightObj => {
+					if (airlinesActiveInputs.indexOf(flightObj.flight.carrier.uid) != -1) {
+						return true;
+					} else return false;
+			});
+
+			return filteredByAirlinesData;
+		}
 
 	sortFilterData(flightsData){
 		const priceDurationSortRadioForm = document.getElementById('price-time-sort-form'),
@@ -338,12 +365,34 @@ class SearchResult extends Component {
 
 		for (let key in airlinesData) {
 			html.push(`
-				<input value="${airlinesData[key].airLineCode}" id="${airlinesData[key].airLineCode}" type="checkbox"><label for="${airlinesData[key].airLineCode}"> – ${key} от ${airlinesData[key].priceFrom} р.</label>
+				<input value="${airlinesData[key].airLineCode}" id="${airlinesData[key].airLineCode}" type="checkbox" checked data-state="${airlinesData[key].airLineCode}"><label for="${airlinesData[key].airLineCode}" data-state="${airlinesData[key].airLineCode}"> – ${key} от ${airlinesData[key].priceFrom} р.</label>
 				<br>
 			`);
 		}
 
 		return html.join('\n ');
+	}
+
+	isAirlineChecked(flightsData) {
+		const airlinesData = this.getAirlinesInfo(flightsData),
+					airlinesForm = document.getElementsByClassName('airlines-form')[0],
+					airlinesActualUid = [],
+					airlinesInputs = airlinesForm.getElementsByTagName('INPUT');
+
+		for (let key in airlinesData) { debugger;
+			airlinesActualUid.push(airlinesData[key].airLineCode);
+		}
+
+		for (let i=0; i<airlinesInputs.length; i++) {
+			airlinesInputs[i].setAttribute('checked', true);
+			if (airlinesActualUid.indexOf(airlinesInputs[i].value) != -1) {
+				airlinesInputs[i].setAttribute('checked', true);
+				airlinesInputs[i].removeAttribute('disabled', true);
+			} else {
+				airlinesInputs[i].removeAttribute('checked');
+				airlinesInputs[i].setAttribute('disabled', true);
+			}
+		}
 	}
 
 	drawFlightsHTML(sortedData) {
