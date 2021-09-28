@@ -376,7 +376,8 @@ class SearchResult extends Component {
 							travelDurationLeg0 = sortedData[i].flight.legs[0].duration,
 							airlineLeg0 = flightSegmentsLeg0[0].airline.caption,
 							price = sortedData[i].flight.price.total.amount,
-							transfersLeg0 = flightSegmentsLeg0.length - 1;
+							transfersLeg0 = flightSegmentsLeg0.length - 1,
+							airlineUid = sortedData[i].flight.carrier.uid;
 
 					let departureCityLeg1 = flightSegmentsLeg1[0].departureCity.caption,
 							departureAirportLeg1 = flightSegmentsLeg1[0].departureAirport.caption,
@@ -398,7 +399,7 @@ class SearchResult extends Component {
 											<div class="content-container__right-part__orders__order">
 												<div class="content-container__right-part__orders__order__flight-box">
 													<div class="content-container__right-part__orders__order__flight-box__flight-title">
-														<img src="https://do4r85wsrjs5z.cloudfront.net/kpbeucoesiepoj/img/logo_en.svg" alt="lot">
+														<img src="${this.getAirlineLogo(airlineUid)}" alt="lot">
 														<p class="content-container__right-part__orders__order__flight-box__flight-title__price-box"><span class="content-container__right-part__orders__order__flight-box__flight-title__price-box__price-text">${price}</span><span> Р</span><br>Стоимость для одного взрослого пассажира</p>
 													</div>
 													<div class="content-container__right-part__orders__order__flight-box__flight-route">
@@ -471,6 +472,43 @@ class SearchResult extends Component {
 	isTransferActive(transfers) {
 		if (transfers == '0') return 'no-transfer'
 		else return ''
+	}
+
+	getAirlineLogo(airlineUid) {
+		let airlineImgLink;
+		switch (true) {
+			case airlineUid === 'LO':
+				airlineImgLink = 'https://do4r85wsrjs5z.cloudfront.net/kpbeucoesiepoj/img/logo_en.svg';
+				break;
+			case airlineUid === 'BT':
+				airlineImgLink = 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/AirBaltic_logo.svg/1280px-AirBaltic_logo.svg.png';
+				break;
+			case airlineUid === 'AF':
+				airlineImgLink = 'https://airhex.com/images/airline-logos/air-france.png';
+				break;
+			case airlineUid === 'KL':
+				airlineImgLink = 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/KLM_logo.svg/1280px-KLM_logo.svg.png';
+				break;
+			case airlineUid === 'SN':
+				airlineImgLink = 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Brussels_Airlines_logo.svg/2560px-Brussels_Airlines_logo.svg.png';
+				break;
+			case airlineUid === 'TK':
+				airlineImgLink = 'https://www.freepnglogos.com/uploads/turkish-airlines-logos-png-1.png';
+				break;
+			case airlineUid === 'SU1':
+				airlineImgLink = 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Aeroflot_Russian_Airlines_logo_%28ru%29.svg/2560px-Aeroflot_Russian_Airlines_logo_%28ru%29.svg.png';
+				break;
+			case airlineUid === 'AZ':
+				airlineImgLink = 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Alitalia_logo_2017.png/1200px-Alitalia_logo_2017.png';
+				break;
+			case airlineUid === 'AY':
+				airlineImgLink = 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Finnair_Logo.svg/1280px-Finnair_Logo.svg.png';
+				break;
+			case airlineUid === 'PC':
+				airlineImgLink = 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Pegasus_Airlines_logo.svg/1280px-Pegasus_Airlines_logo.svg.png';
+				break;
+		}
+		return airlineImgLink;
 	}
 
 }
